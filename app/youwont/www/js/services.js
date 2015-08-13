@@ -127,27 +127,19 @@ angular.module('youwont.services', [])
     db.addFriend = function(friend,callback){
         //get user object
         
-        var currentUser = db.ref.getAuth().facebook.displayName;
-       
-     
-
-        db.ref.child('users').orderByChild('name').equalTo(currentUser).on('child_added',  function(snapshot){ 
-        
-          if (friend){
+        var currentUser = db.ref.getAuth().uid;
+        var ref = new Firebase("https://sayiwont.firebaseio.com/users/"+currentUser+"/friends");
+        if (friend){
            //
            var friendObject = {
             id: friend.id,
             name: friend.name,
             profilePicture: friend.profilePicture
            }
-           
-           var key = friendObject.id
-                       
-           snapshot.ref().child('friends').push().set({friendObject})
-            
-          }
-          
-        })
+           console.log('trying')
+        ref.child(friendObject.id).set(friendObject);
+      }
+
     }
 
     db.getFriends = function(callback){
@@ -163,6 +155,29 @@ angular.module('youwont.services', [])
       });
 
       
+    }
+
+    db.getUsersChallenges = function(callback){
+
+       var ref = new Firebase("https://sayiwont.firebaseio.com/challenges")
+       ref.orderByKey().on("child_added",function(snapshot){
+          isFriend(snapshot.val().user)
+       })
+       //get challenges of current users friends
+
+    }
+
+    //determine if user is friend of current user
+    var isFriend = function(friend){
+      //grab current users friends
+
+      var currentUser = db.ref.getAuth().facebook.displayName;
+       db.ref.child('users').orderByChild('name').equalTo(currentUser).on('child_added',  function(snapshot){
+        //see if friend exists in this list
+        
+        console.dir(snapshot.val().friends)
+          
+      });
     }
     return db;
   });
