@@ -100,13 +100,15 @@ angular.module('youwont.services', [])
         });    
       }
     };
-    db.addNewChallenge = function(challengeName,challengeDescription,user){
+    db.addNewChallenge = function(challengeName,challengeDescription,user,vidURL){
       alert(user)
-      if (challengeName && challengeDescription && user){
+      if (challengeName && challengeDescription && user && vidURL){
         db.ref.child("challenges").child(challengeName).set({
           challengeName:challengeName,
           challengeDescription:challengeDescription,
-          user:user
+          user:user,
+          video:vidURL,
+          responses: {}
         });
       } else {
         console.error('addNewChallenge is missing params')
@@ -114,22 +116,38 @@ angular.module('youwont.services', [])
 
     };
 
+    db.addResponse = function(challenge,responseVidURL,user){
+      if (challenge && responseVidURL && user){
+        //add response as property of challenge
+      } else {
+        console.error('addResponse missing params')
+      }
+    }
+
     db.addFriend = function(friend,callback){
         //get user object
         
         var currentUser = db.ref.getAuth().facebook.displayName;
-      
+        console.log()
      
 
         db.ref.child('users').orderByChild('name').equalTo(currentUser).on('child_added',  function(snapshot){ 
         
           if (friend){
            //
-
+           var friendObject = {
+            id: friend.id,
+            name: friend.name,
+            profilePicture: friend.profilePicture
+           }
+           
+           var key = friendObject.id
+           console.log(key)
+                       
+            snapshot.ref().child('friends').push(friendObject)
             
           }
-          //add friend to user object's friends array
-          //snapshot.val().friends.push(friend)
+          
         })
     }
 
