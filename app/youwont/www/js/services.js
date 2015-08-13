@@ -128,7 +128,7 @@ angular.module('youwont.services', [])
         //get user object
         
         var currentUser = db.ref.getAuth().facebook.displayName;
-        console.log()
+       
      
 
         db.ref.child('users').orderByChild('name').equalTo(currentUser).on('child_added',  function(snapshot){ 
@@ -142,9 +142,8 @@ angular.module('youwont.services', [])
            }
            
            var key = friendObject.id
-           console.log(key)
                        
-            snapshot.ref().child('friends').push(friendObject)
+           snapshot.ref().child('friends').push().set({friendObject})
             
           }
           
