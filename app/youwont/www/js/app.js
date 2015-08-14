@@ -25,6 +25,16 @@ youwont.config(function ($stateProvider, $urlRouterProvider) {
         }
       }
     })
+    .state('response', {
+      url : "/response/:id",
+      templateUrl: 'templates/response.html',
+      controller: "responseCtrl",
+      onEnter: function($state,authLogin){
+        if (!authLogin.checkState()){
+          $state.go('login')
+        }
+      }
+    })
     .state('video', {
       url : "/video",
       templateUrl: 'templates/video.html',
@@ -75,7 +85,6 @@ youwont.run(function($ionicPlatform, $rootScope, authLogin, $state) {
     }
 
     $rootScope.$on('$stateChangeStart',function(event, toState, toParams, fromState, fromParams) {
-       console.log('state changed')
       if (toState.name !== 'login' && !authLogin.checkState()){
         console.log('prevention')
           $state.go('login')
@@ -83,7 +92,6 @@ youwont.run(function($ionicPlatform, $rootScope, authLogin, $state) {
       }
 
       if (toState.name === 'login' && authLogin.checkState()){
-        console.log('already logged in')
           $state.go('home');
           event.preventDefault();
       }

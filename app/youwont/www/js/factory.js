@@ -50,12 +50,10 @@ facebookLoginFactory.factory('authLogin', function($state, DatabaseService) {
 
 	login.checkState = function(){
 		//get auth status
-		console.log('checking state')
 		var isLoggedIn = false;
 		var authData = login.ref.getAuth();
 		
 		if (authData){
-			console.log('User is logged in!')
 			isLoggedIn = true;
 		} else {
 			isLoggedIn = false;
@@ -68,20 +66,8 @@ facebookLoginFactory.factory('authLogin', function($state, DatabaseService) {
 //Factory to share challenges and responses
 var challengesFactory = angular.module('Challenges', []);
 challengesFactory.factory('challenges', function () {
+
 	var challenges = [];
-	
-  (function() {
-    for (var i = 0; i < 4; i++) {
-      challenges.push({
-        id: i,
-        title: "Title " + i,
-        clip: '',
-        img: "http://placehold.it/50x50",
-        description: "Walk to the corner shop naked",
-        likes: 3
-      });
-    }
-  })();
 
 	return challenges;
 

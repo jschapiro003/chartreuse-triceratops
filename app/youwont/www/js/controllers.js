@@ -4,27 +4,17 @@ youwontController.controller('challengeCtrl', function ($scope, challenges) {
   $scope.challenges = challenges;
 });
 
-youwontController.controller('responsesCtrl', function ($scope) {
+youwontController.controller('responsesCtrl', function ($scope, challenges) {
+  $scope.challenges = challenges;
+});
 
-  $scope.challenge = {
-    title: "Mark's challenge",
-    responses : []
-  };
-
-  (function() {
-    for (var i = 0; i < 3; i++) {
-      $scope.challenge.responses.push({
-        id: i,
-        title: "Test title",
-        people: "Bob, Peter, Joanne",
-        img: "http://placehold.it/50x50",
-        description: "Walk to the corner shop naked",
-        likes: 3
-      });
-
+youwontController.controller('responseCtrl', function ($scope, $stateParams, challenges) {
+  $scope.challenge = null;
+  angular.forEach(challenges, function (value, key) {
+    if ($stateParams.id === value.id) {
+      $scope.challenge = value;
     }
-  })();
-
+  });
 });
 
 youwontController.controller('loginCtrl', function ($scope,authLogin) {
@@ -40,18 +30,25 @@ youwontController.controller('friendsCtrl', function ($scope,authLogin,DatabaseS
    $scope.addFriend = DatabaseService.addFriend;
 });
 
-youwontController.controller('videoCtrl', function ($scope, challenges, $ionicPlatform, $state, $cordovaCamera, $cordovaCapture, VideoService,DatabaseService,authLogin) {
-  
+youwontController.controller('videoCtrl', function ($scope, challenges, $ionicPlatform, $state, $cordovaCamera, $cordovaCapture, VideoService, DatabaseService, authLogin) {
 
   $scope.challenge = {};
-  challenges.push($scope.challenge);
+  reset();
 
-  $scope.challenge.clip = '';
-  $scope.challenge.status = '';
-  $scope.challenge.title = '';
-  $scope.challenge.description = '';
-  $scope.user = authLogin.ref.getAuth();
-  $scope.user = $scope.user.uid
+  //helper function to reset challenges
+  function reset() {
+    $scope.challenge.clip = null;
+    $scope.challenge.id = null;
+    $scope.challenge.status = '';
+    $scope.challenge.uid = authLogin.ref.getAuth().uid;
+    $scope.challenge.img = '';
+    $scope.challenge.title = '';
+    $scope.challenge.description = '';
+  }
+
+  function createId(clipUrl) {
+    return clipUrl.substr(clipUrl.lastIndexOf('/') + 1).slice(0, -4);
+  }
 
   $scope.captureVideo = function() {
 
@@ -67,14 +64,15 @@ youwontController.controller('videoCtrl', function ($scope, challenges, $ionicPl
             .success(function(data) {
                 $scope.challenge.clip = data;
                 $scope.challenge.status = data;
+                $scope.challenge.id = createId(data);
                 $scope.challenge.img = $scope.generateThumb(data);
                 $scope.$apply();
               }).error(function(data) {
                 $scope.challenge.status = data;
               });
-            }, function(err) {
-              $scope.challenge.status = err.message;
-            });
+          }, function(err) {
+            $scope.challenge.status = err.message;
+          });
     }); //wrapper
 
   };
@@ -95,5 +93,15 @@ youwontController.controller('videoCtrl', function ($scope, challenges, $ionicPl
     //console.log('description: ' + $scope.challenge.description)
     DatabaseService.addNewChallenge(title,description,user);
   }
+
+  $scope.save = function () {
+    if ($scope.challenge.img && !!$scope.challenge.clip) {
+      challenges.push(angular.copy($scope.challenge));
+      //need to add clip, id, img, id, title, description
+      //DatabaseService.addNewChallenge(title,description,user);
+      //reset previous
+      reset();
+    } //else notify user
+  };
 
 });

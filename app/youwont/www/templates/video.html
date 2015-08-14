@@ -1,5 +1,4 @@
 <ion-content ng-controller="videoCtrl">
-  <!-- List -->
   <ion-list ng-model="challenge">
     <ion-item>
       <label class="item item-input item-floating-label">
@@ -7,14 +6,19 @@
         <input type="text" placeholder="Title" ng-model="challenge.title">
       </label>
       <label class="item item-input item-floating-label">
-        <span class="input-label">Video Description</span>
-        <input type="text" placeholder="Video Description" ng-model="challenge.description">
+        <span class="input-label">Description</span>
+        <input type="text" placeholder="Description" ng-model="challenge.description">
       </label>
-      <div class="item item-body">
+      <div class="item item-body" style="margin-bottom: 100px;">
         <video ng-show="challenge.img" src="{{challenge.clip}}" poster="{{generateThumb(challenge.clip)}}"></video>
+        <button class="button button-block icon-right ion-videocamera button-dark" ng-click="captureVideo()">{{ challenge.clip ? "Retake video" : "Take video" }}</button>
+
+        <button ng-show="challenge.clip" class="button button-block icon-right button-balanced" ng-click="save()">Save</button>
+
+
+        <button ng-click='testChallenge()'> Test Challenge </button>
+
       </div>
-      <button ng-click="captureVideo()">Take video</button>
-      <button ng-click='testChallenge()'> Test Challenge </button>
     </ion-item>
   </ion-list>
 </ion-content>

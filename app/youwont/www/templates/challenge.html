@@ -1,10 +1,8 @@
-<ion-content ng-controller"challengeCtrl">
-  <!-- List -->
-  <ion-list>
-    <div ng-repeat="challenge in challenges">
+<ion-content ng-controller"challengeCtrl" style="margin-bottom: 100px;">
+  <ion-list >
+    <div ng-repeat="challenge in challenges" ui-sref="response({{challenge}})">
       <!-- Challenge Header -->
       <div class="item item-divider">{{challenge.title}}</div>
-      <!-- Display Current Challenge -->
       <ion-item>
         <a ui-sref="responses" class="item item-thumbnail-left">
           <img src="{{challenge.img}}" alt="chall">
